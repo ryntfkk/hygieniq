@@ -42,10 +42,10 @@ const PRODUCT = {
 };
 
 const REVIEWS = [
-    { img: "/review5.jpg", name: "@sarah_clean" },
-    { img: "/review6.jpg", name: "@budi_hygiene" },
-    { img: "/review3.png", name: "@mama_bersih" },
-    { img: "/review4.png", name: "@clean_freak_id" },
+    { img: "/review5.jpg", name: "@duta.racun" },
+    { img: "/review6.jpg", name: "@ufi_hanida" },
+    { img: "/review7.jpg", name: "@indaahn" },
+    { img: "/review8.jpg", name: "@bundakanama.1" },
 ];
 
 // ── Types ──────────────────────────────────────────────────────────────────────
