@@ -42,8 +42,8 @@ const PRODUCT = {
 };
 
 const REVIEWS = [
-    { img: "/review1.png", name: "@sarah_clean" },
-    { img: "/review2.png", name: "@budi_hygiene" },
+    { img: "/review5.jpg", name: "@sarah_clean" },
+    { img: "/review6.jpg", name: "@budi_hygiene" },
     { img: "/review3.png", name: "@mama_bersih" },
     { img: "/review4.png", name: "@clean_freak_id" },
 ];
@@ -82,8 +82,8 @@ function Navigation({ currentPage, setCurrentPage, isMenuOpen, toggleMenu, setIs
                         <div className="hidden w-8 h-8 bg-hy-blue rounded-lg items-center justify-center">
                             <ShieldCheck className="text-white w-5 h-5" />
                         </div>
-                        <span className="text-2xl font-bold tracking-tight text-hy-dark">
-                            HYGIENIQ<span className="text-hy-blue">.</span>
+                        <span className="text-2xl font-bold tracking-tight text-hy-blue">
+                            HYGIENI<span className="text-hy-dark">Q</span>
                         </span>
                     </div>
 
