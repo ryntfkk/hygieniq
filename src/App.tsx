@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 
 // ── Constants ──────────────────────────────────────────────────────────────────
-const WA_NUMBER = "6281234567890"; // Ganti dengan nomor WhatsApp bisnis
+const WA_NUMBER = "62"; // Ganti dengan nomor WhatsApp bisnis
 const WA_URL = `https://wa.me/${WA_NUMBER}?text=Halo%20Hygieniq%2C%20saya%20ingin%20bertanya%20tentang%20produk%20Anda.`;
 
 const MARKETPLACES = [
@@ -35,9 +35,8 @@ const MARKETPLACES = [
 
 const PRODUCT = {
     id: 1,
-    name: "Hygieniq All-Purpose Cleaner",
-    description: "Pembersih serbaguna dengan formula anti-bakteri yang ampuh mengangkat noda membandel pada berbagai permukaan tanpa merusak material.",
-    price: "Rp 28.500",
+    name: "Hygieniq All Purpose Refresher",
+    description: "Pewangi serbaguna dengan formula anti-bakteri yang ampuh membunuh bakteri penyebab bau pada berbagai permukaan tanpa merusak material.",
     image: "/product.png",
     features: ["Anti-Bakteri 99.9%", "Ramah Lingkungan", "Aroma Segar"],
 };
