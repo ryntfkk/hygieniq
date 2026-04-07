@@ -13,4 +13,15 @@ export default defineConfig({
     server: {
         hmr: process.env.DISABLE_HMR !== 'true',
     },
+    preview: {
+        // SPA fallback untuk vite preview
+        port: 3000,
+    },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: undefined,
+            },
+        },
+    },
 });

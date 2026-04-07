@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import {
     ShoppingBag,
@@ -16,7 +17,6 @@ import {
     Percent,
     Wallet,
     Rocket,
-    ChevronLeft,
     Play,
     Phone
 } from "lucide-react";
@@ -30,7 +30,7 @@ const MARKETPLACES = [
     { name: "Tokopedia", url: "https://www.tokopedia.com/search?st=product&q=Hygieniq", color: "bg-[#42B549]" },
     { name: "Lazada", url: "https://www.lazada.co.id/catalog/?q=Hygieniq", color: "bg-[#000083]" },
     { name: "Blibli", url: "https://www.blibli.com/jual/hygieniq", color: "bg-[#0095DA]" },
-    { name: "TikTok Shop", url: "https://www.tiktok.com/search?q=Hygieniq", color: "bg-black" },
+    { name: "TikTok Shop", url: "https://vt.tiktok.com/ZSHP6NuJX/?page=Mall", color: "bg-black" },
 ];
 
 const PRODUCT = {
@@ -48,27 +48,17 @@ const REVIEWS = [
     { img: "/review8.jpg", name: "@bundakanama.1" },
 ];
 
-// ── Types ──────────────────────────────────────────────────────────────────────
-type Page = 'home' | 'affiliate';
+// ── Navigation ─────────────────────────────────────────────────────────────────
+function Navigation() {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const location = useLocation();
+    const isAffiliate = location.pathname === "/affiliate";
 
-interface NavigationProps {
-    currentPage: Page;
-    setCurrentPage: (p: Page) => void;
-    isMenuOpen: boolean;
-    toggleMenu: () => void;
-    setIsMenuOpen: (v: boolean) => void;
-}
-
-// ── Navigation (outside App to prevent re-creation on every render) ─────────
-function Navigation({ currentPage, setCurrentPage, isMenuOpen, toggleMenu, setIsMenuOpen }: NavigationProps) {
     return (
         <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16 items-center">
-                    <div
-                        className="flex items-center gap-2 cursor-pointer"
-                        onClick={() => setCurrentPage('home')}
-                    >
+                    <Link to="/" className="flex items-center gap-2 cursor-pointer">
                         <img
                             src="/logo.png"
                             alt="Hygieniq Logo"
@@ -85,30 +75,27 @@ function Navigation({ currentPage, setCurrentPage, isMenuOpen, toggleMenu, setIs
                         <span className="text-2xl font-bold tracking-tight text-hy-blue">
                             HYGIENI<span className="text-hy-dark">Q</span>
                         </span>
-                    </div>
+                    </Link>
 
                     {/* Desktop Menu */}
                     <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-                        {currentPage === 'home' ? (
+                        {!isAffiliate ? (
                             <>
                                 <a href="#produk" className="hover:text-hy-blue transition-colors">Produk</a>
                                 <a href="#marketplace" className="hover:text-hy-blue transition-colors">Marketplace</a>
                                 <a href="#tentang" className="hover:text-hy-blue transition-colors">Tentang Kami</a>
                             </>
                         ) : (
-                            <button
-                                onClick={() => setCurrentPage('home')}
-                                className="flex items-center gap-2 hover:text-hy-blue transition-colors"
-                            >
-                                <ChevronLeft className="w-4 h-4" /> Kembali ke Beranda
-                            </button>
+                            <Link to="/" className="flex items-center gap-2 hover:text-hy-blue transition-colors">
+                                ← Kembali ke Beranda
+                            </Link>
                         )}
-                        <button
-                            onClick={() => setCurrentPage('affiliate')}
-                            className={`transition-colors ${currentPage === 'affiliate' ? 'text-hy-blue' : 'hover:text-hy-blue'}`}
+                        <Link
+                            to="/affiliate"
+                            className={`transition-colors ${isAffiliate ? 'text-hy-blue font-semibold' : 'hover:text-hy-blue'}`}
                         >
                             Affiliate
-                        </button>
+                        </Link>
                         <a
                             href={WA_URL}
                             target="_blank"
@@ -122,7 +109,7 @@ function Navigation({ currentPage, setCurrentPage, isMenuOpen, toggleMenu, setIs
                     {/* Mobile Menu Button */}
                     <div className="md:hidden flex items-center">
                         <button
-                            onClick={toggleMenu}
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
                             className="text-hy-dark p-2 hover:bg-gray-100 rounded-lg transition-colors"
                             aria-label="Toggle menu"
                         >
@@ -132,7 +119,7 @@ function Navigation({ currentPage, setCurrentPage, isMenuOpen, toggleMenu, setIs
                 </div>
             </div>
 
-            {/* Mobile Menu Overlay */}
+            {/* Mobile Menu */}
             <AnimatePresence>
                 {isMenuOpen && (
                     <motion.div
@@ -142,44 +129,24 @@ function Navigation({ currentPage, setCurrentPage, isMenuOpen, toggleMenu, setIs
                         className="md:hidden bg-white border-b border-gray-100 overflow-hidden"
                     >
                         <div className="px-4 pt-2 pb-6 space-y-1">
-                            {currentPage === 'home' ? (
+                            {!isAffiliate ? (
                                 <>
-                                    <a
-                                        href="#produk"
-                                        onClick={() => setIsMenuOpen(false)}
-                                        className="block px-3 py-4 text-base font-medium text-hy-dark hover:text-hy-blue hover:bg-blue-50 rounded-xl transition-all"
-                                    >
-                                        Produk
-                                    </a>
-                                    <a
-                                        href="#marketplace"
-                                        onClick={() => setIsMenuOpen(false)}
-                                        className="block px-3 py-4 text-base font-medium text-hy-dark hover:text-hy-blue hover:bg-blue-50 rounded-xl transition-all"
-                                    >
-                                        Marketplace
-                                    </a>
-                                    <a
-                                        href="#tentang"
-                                        onClick={() => setIsMenuOpen(false)}
-                                        className="block px-3 py-4 text-base font-medium text-hy-dark hover:text-hy-blue hover:bg-blue-50 rounded-xl transition-all"
-                                    >
-                                        Tentang Kami
-                                    </a>
+                                    <a href="#produk" onClick={() => setIsMenuOpen(false)} className="block px-3 py-4 text-base font-medium text-hy-dark hover:text-hy-blue hover:bg-blue-50 rounded-xl transition-all">Produk</a>
+                                    <a href="#marketplace" onClick={() => setIsMenuOpen(false)} className="block px-3 py-4 text-base font-medium text-hy-dark hover:text-hy-blue hover:bg-blue-50 rounded-xl transition-all">Marketplace</a>
+                                    <a href="#tentang" onClick={() => setIsMenuOpen(false)} className="block px-3 py-4 text-base font-medium text-hy-dark hover:text-hy-blue hover:bg-blue-50 rounded-xl transition-all">Tentang Kami</a>
                                 </>
                             ) : (
-                                <button
-                                    onClick={() => { setCurrentPage('home'); setIsMenuOpen(false); }}
-                                    className="w-full text-left px-3 py-4 text-base font-medium text-hy-dark hover:text-hy-blue hover:bg-blue-50 rounded-xl transition-all flex items-center gap-2"
-                                >
-                                    <ChevronLeft className="w-4 h-4" /> Beranda
-                                </button>
+                                <Link to="/" onClick={() => setIsMenuOpen(false)} className="block px-3 py-4 text-base font-medium text-hy-dark hover:text-hy-blue hover:bg-blue-50 rounded-xl transition-all">
+                                    ← Beranda
+                                </Link>
                             )}
-                            <button
-                                onClick={() => { setCurrentPage('affiliate'); setIsMenuOpen(false); }}
-                                className={`w-full text-left px-3 py-4 text-base font-medium rounded-xl transition-all ${currentPage === 'affiliate' ? 'text-hy-blue bg-blue-50' : 'text-hy-dark hover:text-hy-blue hover:bg-blue-50'}`}
+                            <Link
+                                to="/affiliate"
+                                onClick={() => setIsMenuOpen(false)}
+                                className={`block px-3 py-4 text-base font-medium rounded-xl transition-all ${isAffiliate ? 'text-hy-blue bg-blue-50' : 'text-hy-dark hover:text-hy-blue hover:bg-blue-50'}`}
                             >
                                 Affiliate Program
-                            </button>
+                            </Link>
                             <div className="pt-4 px-3">
                                 <a
                                     href={WA_URL}
@@ -187,7 +154,7 @@ function Navigation({ currentPage, setCurrentPage, isMenuOpen, toggleMenu, setIs
                                     rel="noopener noreferrer"
                                     className="w-full bg-hy-blue text-white px-5 py-4 rounded-xl font-bold shadow-lg shadow-hy-blue/20 flex items-center justify-center gap-2"
                                 >
-                                    <MessageCircle className="w-5 h-5" /> Hubungi Kami via WhatsApp
+                                    <MessageCircle className="w-5 h-5" /> Hubungi via WhatsApp
                                 </a>
                             </div>
                         </div>
@@ -199,16 +166,12 @@ function Navigation({ currentPage, setCurrentPage, isMenuOpen, toggleMenu, setIs
 }
 
 // ── Footer ─────────────────────────────────────────────────────────────────────
-interface FooterProps {
-    setCurrentPage: (p: Page) => void;
-}
-
-function Footer({ setCurrentPage }: FooterProps) {
+function Footer() {
     return (
         <footer className="bg-white border-t border-gray-100 py-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-                    <div className="flex items-center gap-2 cursor-pointer" onClick={() => setCurrentPage('home')}>
+                    <Link to="/" className="flex items-center gap-2">
                         <img
                             src="/logo.png"
                             alt="Hygieniq Logo"
@@ -222,14 +185,14 @@ function Footer({ setCurrentPage }: FooterProps) {
                         <div className="hidden w-6 h-6 bg-hy-blue rounded items-center justify-center">
                             <ShieldCheck className="text-white w-4 h-4" />
                         </div>
-                        <span className="text-xl font-bold tracking-tight text-hy-dark">
-                            HYGIENIQ<span className="text-hy-blue">.</span>
+                        <span className="text-xl font-bold tracking-tight text-hy-blue">
+                            HYGIENI<span className="text-hy-dark">Q</span>
                         </span>
-                    </div>
+                    </Link>
 
                     <div className="flex items-center gap-8 text-sm font-medium text-gray-500">
-                        <button onClick={() => setCurrentPage('home')} className="hover:text-hy-blue transition-colors">Beranda</button>
-                        <button onClick={() => setCurrentPage('affiliate')} className="hover:text-hy-blue transition-colors">Affiliate</button>
+                        <Link to="/" className="hover:text-hy-blue transition-colors">Beranda</Link>
+                        <Link to="/affiliate" className="hover:text-hy-blue transition-colors">Affiliate</Link>
                         <a href={WA_URL} target="_blank" rel="noopener noreferrer" className="hover:text-hy-blue transition-colors">Hubungi Kami</a>
                     </div>
 
@@ -254,12 +217,17 @@ function Footer({ setCurrentPage }: FooterProps) {
     );
 }
 
-// ── HomePage ───────────────────────────────────────────────────────────────────
-interface HomePageProps {
-    setCurrentPage: (p: Page) => void;
+// ── ScrollToTop ────────────────────────────────────────────────────────────────
+function ScrollToTop() {
+    const { pathname } = useLocation();
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [pathname]);
+    return null;
 }
 
-function HomePage({ setCurrentPage }: HomePageProps) {
+// ── HomePage ───────────────────────────────────────────────────────────────────
+function HomePage() {
     return (
         <>
             {/* Hero Section */}
@@ -282,24 +250,16 @@ function HomePage({ setCurrentPage }: HomePageProps) {
                                 Hygieniq hadir untuk menyederhanakan rutinitas kebersihan Anda dengan produk berkualitas tinggi yang efektif, aman, dan dirancang khusus untuk gaya hidup generasi modern.
                             </p>
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4">
-                                <a
-                                    href="#produk"
-                                    className="w-full sm:w-auto bg-hy-dark text-white px-6 py-3 md:px-7 md:py-3.5 rounded-full font-bold text-sm hover:bg-hy-dark/90 transition-all flex items-center justify-center gap-2"
-                                >
+                                <a href="#produk" className="w-full sm:w-auto bg-hy-dark text-white px-6 py-3 md:px-7 md:py-3.5 rounded-full font-bold text-sm hover:bg-hy-dark/90 transition-all flex items-center justify-center gap-2">
                                     Lihat Produk <ArrowRight className="w-4 h-4" />
                                 </a>
-                                <a
-                                    href="#marketplace"
-                                    className="w-full sm:w-auto bg-white border-2 border-gray-100 text-hy-dark px-6 py-3 md:px-7 md:py-3.5 rounded-full font-bold text-sm hover:border-hy-blue hover:text-hy-blue transition-all flex items-center justify-center gap-2"
-                                >
+                                <a href="#marketplace" className="w-full sm:w-auto bg-white border-2 border-gray-100 text-hy-dark px-6 py-3 md:px-7 md:py-3.5 rounded-full font-bold text-sm hover:border-hy-blue hover:text-hy-blue transition-all flex items-center justify-center gap-2">
                                     Beli di Marketplace
                                 </a>
                             </div>
                         </motion.div>
                     </div>
                 </div>
-
-                {/* Decorative Elements */}
                 <div className="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/2 w-96 h-96 bg-hy-blue/10 rounded-full blur-3xl"></div>
                 <div className="absolute bottom-0 right-0 translate-y-1/2 translate-x-1/2 w-96 h-96 bg-hy-blue/5 rounded-full blur-3xl"></div>
             </section>
@@ -334,9 +294,7 @@ function HomePage({ setCurrentPage }: HomePageProps) {
                         >
                             <h2 className="text-[10px] md:text-[11px] font-bold text-hy-blue uppercase tracking-widest mb-2">Produk Unggulan</h2>
                             <h3 className="text-2xl md:text-3xl font-bold text-hy-dark mb-4 md:mb-5">{PRODUCT.name}</h3>
-                            <p className="text-sm md:text-lg text-gray-600 mb-6 md:mb-8 leading-relaxed">
-                                {PRODUCT.description}
-                            </p>
+                            <p className="text-sm md:text-lg text-gray-600 mb-6 md:mb-8 leading-relaxed">{PRODUCT.description}</p>
 
                             <div className="space-y-3 md:space-y-3.5 mb-8 md:mb-10 inline-block text-left">
                                 {PRODUCT.features.map((feature, index) => (
@@ -350,7 +308,6 @@ function HomePage({ setCurrentPage }: HomePageProps) {
                             </div>
 
                             <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 md:gap-6">
-                                <span className="text-2xl font-bold text-hy-dark">{PRODUCT.price}</span>
                                 <a
                                     href="#marketplace"
                                     className="w-full sm:w-auto bg-hy-blue text-white px-6 py-3 md:px-7 md:py-2.5 rounded-xl font-bold text-sm hover:bg-hy-blue/90 transition-all flex items-center justify-center gap-2 shadow-lg shadow-hy-blue/30"
@@ -366,11 +323,10 @@ function HomePage({ setCurrentPage }: HomePageProps) {
             {/* Marketplace Section */}
             <section id="marketplace" className="py-16 md:py-20 bg-gray-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h2 className="text-2xl md:text-2xl font-bold text-hy-dark mb-3 md:mb-4 text-center">Tersedia di Marketplace</h2>
+                    <h2 className="text-2xl font-bold text-hy-dark mb-3 md:mb-4">Tersedia di Marketplace</h2>
                     <p className="text-sm md:text-base text-gray-600 mb-10 md:mb-14 max-w-2xl mx-auto px-4">
                         Dapatkan produk Hygieniq dengan mudah melalui marketplace favorit Anda di seluruh Indonesia.
                     </p>
-
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5">
                         {MARKETPLACES.map((mp, index) => (
                             <motion.a
@@ -408,12 +364,12 @@ function HomePage({ setCurrentPage }: HomePageProps) {
                                 Bergabunglah dengan program affiliate kami dan dapatkan komisi hingga 20% untuk setiap penjualan yang Anda referensikan.
                             </p>
                         </div>
-                        <button
-                            onClick={() => setCurrentPage('affiliate')}
+                        <Link
+                            to="/affiliate"
                             className="bg-hy-blue text-white px-8 py-4 rounded-full font-bold hover:bg-hy-blue/90 transition-all shadow-lg shadow-hy-blue/30 whitespace-nowrap flex items-center gap-2"
                         >
                             Pelajari Affiliate <ArrowRight className="w-4 h-4" />
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </section>
@@ -422,7 +378,7 @@ function HomePage({ setCurrentPage }: HomePageProps) {
             <section id="tentang" className="py-16 md:py-20 bg-hy-dark text-white overflow-hidden relative">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="max-w-2xl text-center md:text-left">
-                        <h2 className="text-3xl md:text-3xl font-bold mb-6 md:mb-7">Tentang Hygieniq</h2>
+                        <h2 className="text-3xl font-bold mb-6 md:mb-7">Tentang Hygieniq</h2>
                         <p className="text-base text-blue-100/80 mb-6 md:mb-7 leading-relaxed">
                             Hygieniq lahir dari keinginan untuk menyederhanakan kebersihan bagi masyarakat Indonesia. Kami percaya bahwa lingkungan yang bersih adalah fondasi dari kesehatan dan kebahagiaan bagi generasi modern.
                         </p>
@@ -431,18 +387,16 @@ function HomePage({ setCurrentPage }: HomePageProps) {
                         </p>
                         <div className="grid grid-cols-2 gap-6 md:gap-10">
                             <div>
-                                <div className="text-3xl font-bold text-hy-blue mb-1 md:mb-1.5">100%</div>
+                                <div className="text-3xl font-bold text-hy-blue mb-1">100%</div>
                                 <div className="text-[10px] md:text-[11px] uppercase tracking-widest text-blue-200/60 font-bold">Kualitas Terjamin</div>
                             </div>
                             <div>
-                                <div className="text-3xl font-bold text-hy-blue mb-1 md:mb-1.5">5+</div>
+                                <div className="text-3xl font-bold text-hy-blue mb-1">5+</div>
                                 <div className="text-[10px] md:text-[11px] uppercase tracking-widest text-blue-200/60 font-bold">Marketplace Utama</div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                {/* Decorative circles */}
                 <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[600px] h-[600px] border border-white/5 rounded-full"></div>
                 <div className="absolute top-0 right-0 -translate-y-1/3 translate-x-1/3 w-[600px] h-[600px] border border-white/5 rounded-full"></div>
             </section>
@@ -474,18 +428,10 @@ function AffiliatePage() {
                                 Jadilah bagian dari perjalanan Hygieniq. Bagikan solusi kebersihan modern kepada audiens Anda dan dapatkan komisi menarik untuk setiap transaksi yang berhasil.
                             </p>
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                                <a
-                                    href="#cara-kerja"
-                                    className="w-full sm:w-auto bg-hy-blue text-white px-8 py-4 rounded-full font-bold shadow-lg shadow-hy-blue/30 hover:bg-hy-blue/90 transition-all flex items-center justify-center"
-                                >
+                                <a href="#cara-kerja" className="w-full sm:w-auto bg-hy-blue text-white px-8 py-4 rounded-full font-bold shadow-lg shadow-hy-blue/30 hover:bg-hy-blue/90 transition-all flex items-center justify-center">
                                     Pelajari Cara Bergabung
                                 </a>
-                                <a
-                                    href={WA_URL}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-full sm:w-auto bg-white border-2 border-gray-200 text-hy-dark px-8 py-4 rounded-full font-bold hover:border-hy-blue hover:text-hy-blue transition-all flex items-center justify-center gap-2"
-                                >
+                                <a href={WA_URL} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto bg-white border-2 border-gray-200 text-hy-dark px-8 py-4 rounded-full font-bold hover:border-hy-blue hover:text-hy-blue transition-all flex items-center justify-center gap-2">
                                     <MessageCircle className="w-4 h-4" /> Tanya via WhatsApp
                                 </a>
                             </div>
@@ -499,33 +445,17 @@ function AffiliatePage() {
             <section className="py-16 md:py-24 border-y border-gray-100">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all text-center">
-                            <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-hy-blue mx-auto mb-6">
-                                <Percent className="w-6 h-6" />
+                        {[
+                            { icon: <Percent className="w-6 h-6" />, title: "Komisi Tinggi", desc: "Dapatkan komisi mulai dari 5% hingga 20% untuk setiap produk yang terjual melalui link Anda." },
+                            { icon: <Wallet className="w-6 h-6" />, title: "Pembayaran Cepat", desc: "Proses pencairan komisi yang transparan dan terjadwal langsung ke rekening Anda." },
+                            { icon: <Rocket className="w-6 h-6" />, title: "Dukungan Penuh", desc: "Kami menyediakan materi promosi lengkap mulai dari foto produk hingga konten video siap pakai." },
+                        ].map((item, i) => (
+                            <div key={i} className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all text-center">
+                                <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-hy-blue mx-auto mb-6">{item.icon}</div>
+                                <h3 className="text-xl font-bold text-hy-dark mb-3">{item.title}</h3>
+                                <p className="text-gray-600 text-sm">{item.desc}</p>
                             </div>
-                            <h3 className="text-xl font-bold text-hy-dark mb-3">Komisi Tinggi</h3>
-                            <p className="text-gray-600 text-sm">
-                                Dapatkan komisi mulai dari 5% hingga 20% untuk setiap produk yang terjual melalui link Anda.
-                            </p>
-                        </div>
-                        <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all text-center">
-                            <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-hy-blue mx-auto mb-6">
-                                <Wallet className="w-6 h-6" />
-                            </div>
-                            <h3 className="text-xl font-bold text-hy-dark mb-3">Pembayaran Cepat</h3>
-                            <p className="text-gray-600 text-sm">
-                                Proses pencairan komisi yang transparan dan terjadwal langsung ke rekening Anda.
-                            </p>
-                        </div>
-                        <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all text-center">
-                            <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-hy-blue mx-auto mb-6">
-                                <Rocket className="w-6 h-6" />
-                            </div>
-                            <h3 className="text-xl font-bold text-hy-dark mb-3">Dukungan Penuh</h3>
-                            <p className="text-gray-600 text-sm">
-                                Kami menyediakan materi promosi lengkap mulai dari foto produk hingga konten video siap pakai.
-                            </p>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </section>
@@ -535,11 +465,8 @@ function AffiliatePage() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl font-bold text-hy-dark mb-4">Cara Bergabung</h2>
-                        <p className="text-gray-600 max-w-2xl mx-auto">
-                            Hanya butuh 3 langkah mudah untuk mulai menghasilkan pendapatan pasif bersama Hygieniq.
-                        </p>
+                        <p className="text-gray-600 max-w-2xl mx-auto">Hanya butuh 3 langkah mudah untuk mulai menghasilkan pendapatan pasif bersama Hygieniq.</p>
                     </div>
-
                     <div className="relative">
                         <div className="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-blue-100 -translate-y-1/2 z-0"></div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
@@ -549,9 +476,7 @@ function AffiliatePage() {
                                 { step: "03", title: "Mulai Promosikan", desc: "Pilih produk Hygieniq, ambil link affiliate Anda, dan mulai bagikan untuk meraih komisi." }
                             ].map((item, i) => (
                                 <div key={i} className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 text-center">
-                                    <div className="w-10 h-10 bg-hy-blue text-white rounded-full flex items-center justify-center font-bold mx-auto mb-6">
-                                        {item.step}
-                                    </div>
+                                    <div className="w-10 h-10 bg-hy-blue text-white rounded-full flex items-center justify-center font-bold mx-auto mb-6">{item.step}</div>
                                     <h3 className="text-lg font-bold text-hy-dark mb-3">{item.title}</h3>
                                     <p className="text-gray-600 text-sm leading-relaxed">{item.desc}</p>
                                 </div>
@@ -567,9 +492,7 @@ function AffiliatePage() {
                     <div className="flex flex-col md:flex-row items-end justify-between mb-12 gap-6">
                         <div className="max-w-2xl text-center md:text-left">
                             <h2 className="text-3xl font-bold text-hy-dark mb-4">Apa Kata Mereka?</h2>
-                            <p className="text-gray-600">
-                                Lihat ribuan review jujur dari para affiliate yang telah sukses mempromosikan produk Hygieniq di media sosial mereka.
-                            </p>
+                            <p className="text-gray-600">Lihat ribuan review jujur dari para affiliate yang telah sukses mempromosikan produk Hygieniq.</p>
                         </div>
                         <a
                             href="https://www.instagram.com/hygieniq.id"
@@ -580,7 +503,6 @@ function AffiliatePage() {
                             <Instagram className="w-4 h-4" /> Lihat Semua Review di Instagram
                         </a>
                     </div>
-
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                         {REVIEWS.map((review, idx) => (
                             <motion.a
@@ -595,11 +517,7 @@ function AffiliatePage() {
                                 viewport={{ once: true }}
                                 transition={{ delay: idx * 0.1 }}
                             >
-                                <img
-                                    src={review.img}
-                                    alt={review.name}
-                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                />
+                                <img src={review.img} alt={review.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                                 <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
                                     <span className="text-white text-xs font-bold">{review.name}</span>
@@ -621,28 +539,18 @@ function AffiliatePage() {
             {/* Detailed Explanation */}
             <section className="py-16 md:py-24">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="prose prose-blue max-w-none">
-                        <h2 className="text-3xl font-bold text-hy-dark mb-8 text-center">Mengapa Memilih Affiliate Hygieniq?</h2>
-                        <div className="space-y-8">
-                            <div className="bg-blue-50 p-6 rounded-2xl border-l-4 border-hy-blue">
-                                <h4 className="font-bold text-hy-dark mb-2">Produk Berkualitas &amp; Dibutuhkan</h4>
-                                <p className="text-gray-600 text-sm">
-                                    Produk kebersihan adalah kebutuhan pokok. Hygieniq menawarkan kualitas premium dengan harga yang kompetitif, sehingga lebih mudah untuk dipasarkan kepada siapa saja.
-                                </p>
+                    <h2 className="text-3xl font-bold text-hy-dark mb-8 text-center">Mengapa Memilih Affiliate Hygieniq?</h2>
+                    <div className="space-y-8">
+                        {[
+                            { title: "Produk Berkualitas & Dibutuhkan", desc: "Produk kebersihan adalah kebutuhan pokok. Hygieniq menawarkan kualitas premium dengan harga yang kompetitif, sehingga lebih mudah untuk dipasarkan kepada siapa saja." },
+                            { title: "Sistem Tracking yang Akurat", desc: "Kami menggunakan teknologi pelacakan terbaru untuk memastikan setiap klik dan penjualan dari link Anda tercatat dengan benar tanpa ada yang terlewat." },
+                            { title: "Komisi Berjenjang (Tiered Commission)", desc: "Semakin banyak Anda menjual, semakin besar persentase komisi yang Anda dapatkan. Mulai dari 5% untuk pemula hingga 20% untuk mitra platinum kami." },
+                        ].map((item, i) => (
+                            <div key={i} className="bg-blue-50 p-6 rounded-2xl border-l-4 border-hy-blue">
+                                <h4 className="font-bold text-hy-dark mb-2">{item.title}</h4>
+                                <p className="text-gray-600 text-sm">{item.desc}</p>
                             </div>
-                            <div className="bg-blue-50 p-6 rounded-2xl border-l-4 border-hy-blue">
-                                <h4 className="font-bold text-hy-dark mb-2">Sistem Tracking yang Akurat</h4>
-                                <p className="text-gray-600 text-sm">
-                                    Kami menggunakan teknologi pelacakan terbaru untuk memastikan setiap klik dan penjualan dari link Anda tercatat dengan benar tanpa ada yang terlewat.
-                                </p>
-                            </div>
-                            <div className="bg-blue-50 p-6 rounded-2xl border-l-4 border-hy-blue">
-                                <h4 className="font-bold text-hy-dark mb-2">Komisi Berjenjang (Tiered Commission)</h4>
-                                <p className="text-gray-600 text-sm">
-                                    Semakin banyak Anda menjual, semakin besar persentase komisi yang Anda dapatkan. Mulai dari 5% untuk pemula hingga 20% untuk mitra platinum kami.
-                                </p>
-                            </div>
-                        </div>
+                        ))}
                     </div>
 
                     <div className="mt-16 bg-hy-dark rounded-3xl p-8 md:p-12 text-center text-white">
@@ -672,31 +580,21 @@ function AffiliatePage() {
 
 // ── App ────────────────────────────────────────────────────────────────────────
 export default function App() {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [currentPage, setCurrentPage] = useState<Page>('home');
-
-    const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, [currentPage]);
-
     return (
-        <div className="min-h-screen flex flex-col font-sans">
-            <Navigation
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
-                isMenuOpen={isMenuOpen}
-                toggleMenu={toggleMenu}
-                setIsMenuOpen={setIsMenuOpen}
-            />
-            <main className="flex-grow">
-                {currentPage === 'home'
-                    ? <HomePage setCurrentPage={setCurrentPage} />
-                    : <AffiliatePage />
-                }
-            </main>
-            <Footer setCurrentPage={setCurrentPage} />
-        </div>
+        <BrowserRouter>
+            <ScrollToTop />
+            <div className="min-h-screen flex flex-col font-sans">
+                <Navigation />
+                <main className="flex-grow">
+                    <Routes>
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/affiliate" element={<AffiliatePage />} />
+                        {/* Redirect semua path tidak dikenali ke home */}
+                        <Route path="*" element={<HomePage />} />
+                    </Routes>
+                </main>
+                <Footer />
+            </div>
+        </BrowserRouter>
     );
 }
