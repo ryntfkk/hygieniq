@@ -447,7 +447,6 @@ function AffiliatePage() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {[
                             { icon: <Percent className="w-6 h-6" />, title: "Komisi Tinggi", desc: "Dapatkan komisi mulai dari 5% hingga 20% untuk setiap produk yang terjual melalui link Anda." },
-                            { icon: <Wallet className="w-6 h-6" />, title: "Pembayaran Cepat", desc: "Proses pencairan komisi yang transparan dan terjadwal langsung ke rekening Anda." },
                             { icon: <Rocket className="w-6 h-6" />, title: "Dukungan Penuh", desc: "Kami menyediakan materi promosi lengkap mulai dari foto produk hingga konten video siap pakai." },
                         ].map((item, i) => (
                             <div key={i} className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all text-center">
